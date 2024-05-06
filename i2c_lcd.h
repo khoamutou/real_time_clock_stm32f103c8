@@ -5,7 +5,7 @@
 #include "ds1307.h"
 #define LCD_ADDRESS 0x4E
 
-void lcd_send_byte(char data)
+void lcdSendByte(char data)
 {
 	I2C_GenerateSTART(I2C2, ENABLE);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT))
@@ -22,7 +22,7 @@ void lcd_send_byte(char data)
 	I2C_GenerateSTOP(I2C2, ENABLE);
 }
 
-void lcd_send_data(char data)
+void LcdSendData(char data)
 {
 	char data_u, data_l;
 	uint8_t data_t[4];
@@ -34,11 +34,11 @@ void lcd_send_data(char data)
 	data_t[3] = data_l | 0x09; // en=0, rs=0
 	for (uint8_t i = 0; i < 4; ++i)
 	{
-		lcd_send_byte(data_t[i]);
+		lcdSendByte(data_t[i]);
 	}
 }
 
-void lcd_send_cmd(char cmd)
+void LcdSendCmd(char cmd)
 {
 	char data_u, data_l;
 	uint8_t data_t[4];
@@ -50,11 +50,11 @@ void lcd_send_cmd(char cmd)
 	data_t[3] = data_l | 0x08; // en=0, rs=0
 	for (uint8_t i = 0; i < 4; ++i)
 	{
-		lcd_send_byte(data_t[i]);
+		lcdSendByte(data_t[i]);
 	}
 }
 
-void lcd_send_string(uint8_t *str)
+void LcdSendString(uint8_t *str)
 {
 	while (*str)
 		lcd_send_data(*str++);
@@ -62,30 +62,30 @@ void lcd_send_string(uint8_t *str)
 
 void lcd_clear_display(void)
 {
-	lcd_send_cmd(0x01); // clear display
+	LcdSendCmd(0x01); // clear display
 	Delay_SysTick(50);
 }
 
 void lcd_init(void)
 {
-	lcd_send_cmd(0x33); /* set 4-bits interface */
+	LcdSendCmd(0x33); /* set 4-bits interface */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x32);
+	LcdSendCmd(0x32);
 	Delay_SysTick(50);
-	lcd_send_cmd(0x28); /* start to set LCD function */
+	LcdSendCmd(0x28); /* start to set LCD function */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x06); /* set entry mode */
+	LcdSendCmd(0x06); /* set entry mode */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x0C); /* set display to on */
+	LcdSendCmd(0x0C); /* set display to on */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x02); /* move cursor to home and set data address to 0 */
+	LcdSendCmd(0x02); /* move cursor to home and set data address to 0 */
 	Delay_SysTick(50);
-	lcd_send_cmd (0x80);
+	LcdSendCmd(0x80);
 	Delay_SysTick(50);
 }
 
 // lcd go to X(first row), Y(second row) line
-void lcd_GoToXY(char row, char col)
+void LcdGoToXY(char row, char col)
 {
 	char pos;
 
@@ -96,14 +96,14 @@ void lcd_GoToXY(char row, char col)
 		if (col < 16)
 			pos = pos + col;
 
-		lcd_send_cmd(pos);
+		LcdSendCmd(pos);
 	}
 }
 
 // lcd display rtc time function
 void lcd_DisplayRtcTime(char hour, char min, char sec)
 {
-	lcd_GoToXY(0, 0);
+	LcdGoToXY(0, 0);
 	lcd_send_data(((hour >> 4) & 0x0f) + 0x30);
 	lcd_send_data((hour & 0x0f) + 0x30);
 	lcd_send_data(':');
@@ -119,7 +119,7 @@ void lcd_DisplayRtcTime(char hour, char min, char sec)
 // lcd display rtc date function
 void lcd_DisplayRtcDate(char day, char month, char year)
 {
-	lcd_GoToXY(1, 0);
+	LcdGoToXY(1, 0);
 	lcd_send_data(((day >> 4) & 0x0f) + 0x30);
 	lcd_send_data((day & 0x0f) + 0x30);
 	lcd_send_data('/');
@@ -134,7 +134,7 @@ void lcd_DisplayRtcDate(char day, char month, char year)
 
 void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 {
-	lcd_GoToXY(0, 0);
+	LcdGoToXY(0, 0);
 	lcd_send_data(((TimeAndDatePtr->hour >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->hour & 0x0f) + 0x30);
 	lcd_send_data(':');
@@ -146,7 +146,7 @@ void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 	lcd_send_data(((TimeAndDatePtr->second >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->second & 0x0f) + 0x30);
 
-	lcd_GoToXY(1, 0);
+	LcdGoToXY(1, 0);
 	lcd_send_data(((TimeAndDatePtr->date >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->date & 0x0f) + 0x30);
 	lcd_send_data('/');
@@ -161,13 +161,13 @@ void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 	lcd_send_data((TimeAndDatePtr->year & 0x0f) + 0x30);
 }
 
-void lcd_DisplayAlarm (TimeStructTypedef *TimeAndDatePtr)
+void lcd_DisplayAlarm(TimeStructTypedef *TimeAndDatePtr)
 {
-	lcd_GoToXY(0, 0);
-	
-	lcd_send_string("ALARM: ");
+	LcdGoToXY(0, 0);
 
-	lcd_GoToXY(1, 0);
+	LcdSendString("ALARM: ");
+
+	LcdGoToXY(1, 0);
 	lcd_send_data(((TimeAndDatePtr->hour >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->hour & 0x0f) + 0x30);
 	lcd_send_data(':');
@@ -180,12 +180,12 @@ void lcd_DisplayAlarm (TimeStructTypedef *TimeAndDatePtr)
 	lcd_send_data((TimeAndDatePtr->second & 0x0f) + 0x30);
 }
 
-void lcd_change_cursor_position (uint8_t position)
+void LcdChangeCursorPosition(uint8_t position)
 {
-	lcd_send_cmd(position);
+	LcdSendCmd(position);
 	Delay_SysTick(50);
-	lcd_send_cmd(0x0F);
-	Delay_SysTick(50);	
+	LcdSendCmd(0x0F);
+	Delay_SysTick(50);
 }
 
 #endif

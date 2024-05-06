@@ -31,12 +31,12 @@ typedef struct DS1307_Date
 	uint8_t year;
 } Date;
 
-uint8_t bcd_to_bin(uint8_t bcd)
+uint8_t BcdToBin(uint8_t bcd)
 {
 	return (bcd >> 4) * 10 + (bcd & 0x0f);
 }
 
-uint8_t bin_to_bcd(uint8_t bin)
+uint8_t BinToBcd(uint8_t bin)
 {
 	return ((bin / 10) << 4) | (bin % 10);
 }
@@ -61,46 +61,38 @@ void DS1307_Init()
 void DS1307_Write_Struct( TimeAndDate * TimeAndDatePtr)
 {
 	I2C_GenerateSTART(I2C2, ENABLE);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT)) {};
 
 	I2C_Send7bitAddress(I2C2, DS1307_ADDRESS, I2C_Direction_Transmitter);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {};
 	//
 	I2C_SendData(I2C2, TIME_ADDRESS);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
 	//
 	I2C_SendData(I2C2, TimeAndDatePtr->second & 0x7F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
 	I2C_SendData(I2C2, TimeAndDatePtr->minute & 0x7F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
 	I2C_SendData(I2C2, TimeAndDatePtr->hour & 0x3F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
 	{
 	};
 	I2C_SendData(I2C2, TimeAndDatePtr->day & 0x07);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
 	{
 	};
 	I2C_SendData(I2C2, TimeAndDatePtr->date & 0x3F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
 	{
 	};
 	I2C_SendData(I2C2, TimeAndDatePtr->month & 0x1F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
 	{
 	};
 	I2C_SendData(I2C2, TimeAndDatePtr->year & 0xFF);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) {};
 	{
 	};
 	I2C_GenerateSTOP(I2C2, ENABLE);
@@ -110,48 +102,38 @@ void DS1307_Write(uint8_t hour, uint8_t minute, uint8_t second,
 				  uint8_t day, uint8_t date, uint8_t month, uint8_t year)
 {
 	I2C_GenerateSTART(I2C2, ENABLE);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT)) {};
+
 
 	I2C_Send7bitAddress(I2C2, DS1307_ADDRESS, I2C_Direction_Transmitter);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {};
+
 	//
 	I2C_SendData(I2C2, TIME_ADDRESS);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
 	//
-	I2C_SendData(I2C2, bin_to_bcd(second) & 0x7F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
-	I2C_SendData(I2C2, bin_to_bcd(minute) & 0x7F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
-	I2C_SendData(I2C2, bin_to_bcd(hour) & 0x3F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
-	I2C_SendData(I2C2, bin_to_bcd(day) & 0x07);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
-	I2C_SendData(I2C2, bin_to_bcd(date) & 0x3F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
-	I2C_SendData(I2C2, bin_to_bcd(month) & 0x1F);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
-	{
-	};
-	I2C_SendData(I2C2, bin_to_bcd(year) & 0xFF);
-	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
-	{
-	};
+	I2C_SendData(I2C2, BinToBcd(second) & 0x7F);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
+	I2C_SendData(I2C2, BinToBcd(minute) & 0x7F);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
+	I2C_SendData(I2C2, BinToBcd(hour) & 0x3F);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
+	I2C_SendData(I2C2, BinToBcd(day) & 0x07);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
+	I2C_SendData(I2C2, BinToBcd(date) & 0x3F);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
+	I2C_SendData(I2C2, BinToBcd(month) & 0x1F);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING)) {};
+
+	I2C_SendData(I2C2, BinToBcd(year) & 0xFF);
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) {};
+
 	I2C_GenerateSTOP(I2C2, ENABLE);
 }
 
@@ -208,7 +190,7 @@ TimeStructTypedef DS1307_Read_Time(void)
 	//
 }
 
-Date DS1307_Read_Date(void)
+Date DS1307_ReadDate(void)
 {
 	Date TempDate = {0};
 	I2C_AcknowledgeConfig(I2C2, ENABLE);
@@ -343,7 +325,7 @@ void DS1307_Set_Alarm( TimeStructTypedef * TimeStructTypedefPtr, uint8_t IsAlarm
 	I2C_GenerateSTOP( I2C2, ENABLE);
 }
 
-TimeStructTypedef DS1307_Read_Alarm_Time(uint8_t * IsAlarm)
+TimeStructTypedef DS1307_ReadAlarmTime(uint8_t * IsAlarm)
 {
 	TimeStructTypedef AlarmTime;
 	
