@@ -5,7 +5,7 @@
 #include "ds1307.h"
 #define LCD_ADDRESS 0x4E
 
-void lcd_send_byte(char data)
+void lcdSendByte(char data)
 {
 	I2C_GenerateSTART(I2C2, ENABLE);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT))
@@ -22,7 +22,7 @@ void lcd_send_byte(char data)
 	I2C_GenerateSTOP(I2C2, ENABLE);
 }
 
-void lcd_send_data(char data)
+void lcdSendData(char data)
 {
 	char data_u, data_l;
 	uint8_t data_t[4];
@@ -34,7 +34,7 @@ void lcd_send_data(char data)
 	data_t[3] = data_l | 0x09; // en=0, rs=0
 	for (uint8_t i = 0; i < 4; ++i)
 	{
-		lcd_send_byte(data_t[i]);
+		lcdSendByte(data_t[i]);
 	}
 }
 
@@ -50,7 +50,7 @@ void lcd_send_cmd(char cmd)
 	data_t[3] = data_l | 0x08; // en=0, rs=0
 	for (uint8_t i = 0; i < 4; ++i)
 	{
-		lcd_send_byte(data_t[i]);
+		lcdSendByte(data_t[i]);
 	}
 }
 
@@ -80,7 +80,7 @@ void lcd_init(void)
 	Delay_SysTick(50);
 	lcd_send_cmd(0x02); /* move cursor to home and set data address to 0 */
 	Delay_SysTick(50);
-	lcd_send_cmd (0x80);
+	lcd_send_cmd(0x80);
 	Delay_SysTick(50);
 }
 
@@ -161,10 +161,10 @@ void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 	lcd_send_data((TimeAndDatePtr->year & 0x0f) + 0x30);
 }
 
-void lcd_DisplayAlarm (TimeStructTypedef *TimeAndDatePtr)
+void lcd_DisplayAlarm(TimeStructTypedef *TimeAndDatePtr)
 {
 	lcd_GoToXY(0, 0);
-	
+
 	lcd_send_string("ALARM: ");
 
 	lcd_GoToXY(1, 0);
@@ -180,12 +180,12 @@ void lcd_DisplayAlarm (TimeStructTypedef *TimeAndDatePtr)
 	lcd_send_data((TimeAndDatePtr->second & 0x0f) + 0x30);
 }
 
-void lcd_change_cursor_position (uint8_t position)
+void lcd_change_cursor_position(uint8_t position)
 {
 	lcd_send_cmd(position);
 	Delay_SysTick(50);
 	lcd_send_cmd(0x0F);
-	Delay_SysTick(50);	
+	Delay_SysTick(50);
 }
 
 #endif

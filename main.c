@@ -6,9 +6,9 @@
 /* Hello*/
 #define NORMAL_MODE 0
 #define ADJUST_MODE 1
-#define ALARM_MODE 	2
+#define ALARM_MODE 2
 
-#define ALARM_ON 	1
+#define ALARM_ON 1
 #define ALARM_OFF 0
 
 uint8_t BUTTON_ADJUST_MODE = 0;
@@ -45,12 +45,12 @@ int main(void)
 	NVIC_Configuration();
 	TIM_Configuration();
 	DS1307_Init();
-	//DS1307_Write(2, 56, 0, 1, 3, 12, 23);
+	// DS1307_Write(2, 56, 0, 1, 3, 12, 23);
 	AlarmTime = DS1307_Read_Alarm_Time(&IsAlarm);
 	DS1307_Read();
 	lcd_init();
 	uint8_t CurrentPosition;
-	
+
 	while (1)
 	{
 		LAST_BUTTON_ADJUST_MODE = BUTTON_ADJUST_MODE;
@@ -58,7 +58,7 @@ int main(void)
 
 		LAST_BUTTON_CURSOR_STATE = BUTTON_CURSOR_STATE;
 		BUTTON_CURSOR_STATE = GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15);
-		
+
 		LAST_BUTTON_ADJUST_VALUE = BUTTON_ADJUST_VALUE;
 		BUTTON_ADJUST_VALUE = GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8);
 
@@ -117,11 +117,14 @@ int main(void)
 		{
 			Ds1307Read = DS1307_Read();
 			lcd_DisplayRtc(&Ds1307Read);
-			if (IsAlarm) {
+			if (IsAlarm)
+			{
 				IsTimeToAlarm();
 			}
-			if (LAST_BUTTON_SET_TIME == 0 && BUTTON_SET_TIME == 1) {
-				if ( !GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_13) ) {
+			if (LAST_BUTTON_SET_TIME == 0 && BUTTON_SET_TIME == 1)
+			{
+				if (!GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_13))
+				{
 					GPIO_SetBits(GPIOC, GPIO_Pin_13);
 				}
 			}
@@ -132,7 +135,9 @@ int main(void)
 			// if (BUTTON_SET_TIME == 1 && LAST_BUTTON_SET_TIME == 0)
 			if (BUTTON_SET_TIME == 1)
 			{
-				while (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)) {}
+				while (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9))
+				{
+				}
 				DS1307_Write_Struct(&Temp);
 				lcd_clear_display();
 				lcd_send_cmd(0x0C);
@@ -179,8 +184,8 @@ int main(void)
 					Temp.minute = bin_to_bcd(binMinute);
 					lcd_send_cmd(0x83);
 					Delay_SysTick(50);
-					lcd_send_data(((Temp.minute >> 4) & 0x0f) + 0x30);
-					lcd_send_data((Temp.minute & 0x0f) + 0x30);
+					lcdSendData(((Temp.minute >> 4) & 0x0f) + 0x30);
+					lcdSendData((Temp.minute & 0x0f) + 0x30);
 					break;
 				}
 				case (2):
@@ -190,8 +195,8 @@ int main(void)
 					Temp.second = bin_to_bcd(binSecond);
 					lcd_send_cmd(0x86);
 					Delay_SysTick(50);
-					lcd_send_data(((Temp.second >> 4) & 0x0f) + 0x30);
-					lcd_send_data((Temp.second & 0x0f) + 0x30);
+					lcdSendData(((Temp.second >> 4) & 0x0f) + 0x30);
+					lcdSendData((Temp.second & 0x0f) + 0x30);
 					break;
 				}
 				case (3):
@@ -201,7 +206,8 @@ int main(void)
 					uint8_t binYear = bcd_to_bin(Temp.year);
 					uint8_t MaxDay;
 
-					if (binMonth == 2){
+					if (binMonth == 2)
+					{
 						(binYear % 4 == 0) ? (MaxDay = 29) : (MaxDay = 28);
 					}
 					else if (binMonth == 1 || binMonth == 3 ||
@@ -222,8 +228,8 @@ int main(void)
 					Temp.date = bin_to_bcd(binDate);
 					lcd_send_cmd(0xC0);
 					Delay_SysTick(50);
-					lcd_send_data(((Temp.date >> 4) & 0x0f) + 0x30);
-					lcd_send_data((Temp.date & 0x0f) + 0x30);
+					lcdSendData(((Temp.date >> 4) & 0x0f) + 0x30);
+					lcdSendData((Temp.date & 0x0f) + 0x30);
 					break;
 				}
 				case (4):
@@ -233,8 +239,8 @@ int main(void)
 					Temp.month = bin_to_bcd(binMonth);
 					lcd_send_cmd(0xC3);
 					Delay_SysTick(50);
-					lcd_send_data(((Temp.month >> 4) & 0x0f) + 0x30);
-					lcd_send_data((Temp.month & 0x0f) + 0x30);
+					lcdSendData(((Temp.month >> 4) & 0x0f) + 0x30);
+					lcdSendData((Temp.month & 0x0f) + 0x30);
 					break;
 				}
 				case (5):
@@ -244,8 +250,8 @@ int main(void)
 					Temp.year = bin_to_bcd(binYear);
 					lcd_send_cmd(0xC8);
 					Delay_SysTick(50);
-					lcd_send_data(((Temp.year >> 4) & 0x0f) + 0x30);
-					lcd_send_data((Temp.year & 0x0f) + 0x30);
+					lcdSendData(((Temp.year >> 4) & 0x0f) + 0x30);
+					lcdSendData((Temp.year & 0x0f) + 0x30);
 					break;
 				}
 				default:
@@ -255,8 +261,8 @@ int main(void)
 					Temp.hour = bin_to_bcd(binHour);
 					lcd_send_cmd(0x80);
 					Delay_SysTick(50);
-					lcd_send_data(((Temp.hour >> 4) & 0x0f) + 0x30);
-					lcd_send_data((Temp.hour & 0x0f) + 0x30);
+					lcdSendData(((Temp.hour >> 4) & 0x0f) + 0x30);
+					lcdSendData((Temp.hour & 0x0f) + 0x30);
 					break;
 				}
 				}
@@ -283,7 +289,7 @@ int main(void)
 					break;
 				}
 			}
-			
+
 			if (BUTTON_ADJUST_VALUE && !LAST_BUTTON_ADJUST_VALUE)
 			{
 				switch (CurrentPosition)
@@ -295,8 +301,8 @@ int main(void)
 					AlarmTime.hour = bin_to_bcd(binHour);
 					lcd_send_cmd(0xC0);
 					Delay_SysTick(50);
-					lcd_send_data(((AlarmTime.hour >> 4) & 0x0f) + 0x30);
-					lcd_send_data((AlarmTime.hour & 0x0f) + 0x30);
+					lcdSendData(((AlarmTime.hour >> 4) & 0x0f) + 0x30);
+					lcdSendData((AlarmTime.hour & 0x0f) + 0x30);
 					break;
 				}
 				case (2):
@@ -306,8 +312,8 @@ int main(void)
 					AlarmTime.minute = bin_to_bcd(binMinute);
 					lcd_send_cmd(0xC3);
 					Delay_SysTick(50);
-					lcd_send_data(((AlarmTime.minute >> 4) & 0x0f) + 0x30);
-					lcd_send_data((AlarmTime.minute & 0x0f) + 0x30);
+					lcdSendData(((AlarmTime.minute >> 4) & 0x0f) + 0x30);
+					lcdSendData((AlarmTime.minute & 0x0f) + 0x30);
 					break;
 				}
 				case (3):
@@ -317,8 +323,8 @@ int main(void)
 					AlarmTime.second = bin_to_bcd(binSecond);
 					lcd_send_cmd(0xC6);
 					Delay_SysTick(50);
-					lcd_send_data(((AlarmTime.second >> 4) & 0x0f) + 0x30);
-					lcd_send_data((AlarmTime.second & 0x0f) + 0x30);
+					lcdSendData(((AlarmTime.second >> 4) & 0x0f) + 0x30);
+					lcdSendData((AlarmTime.second & 0x0f) + 0x30);
 					break;
 				}
 				default:
@@ -347,10 +353,10 @@ int main(void)
 				}
 				}
 			}
-			
+
 			if (BUTTON_SET_TIME == 1 && LAST_BUTTON_SET_TIME == 0)
 			{
-				DS1307_Set_Alarm (&AlarmTime, IsAlarm);
+				DS1307_Set_Alarm(&AlarmTime, IsAlarm);
 			}
 			//
 		}
@@ -359,9 +365,7 @@ int main(void)
 
 void IsTimeToAlarm(void)
 {
-	if ((Ds1307Read.hour == AlarmTime.hour) 
-		&& (Ds1307Read.minute == AlarmTime.minute) 
-		&& (Ds1307Read.second == AlarmTime.second))
+	if ((Ds1307Read.hour == AlarmTime.hour) && (Ds1307Read.minute == AlarmTime.minute) && (Ds1307Read.second == AlarmTime.second))
 	{
 		GPIO_ResetBits(GPIOC, GPIO_Pin_13);
 		TIM_Cmd(TIM2, ENABLE);
@@ -408,19 +412,18 @@ void GPIOInit(void)
 	I2C2_InitStruct.I2C_OwnAddress1 = 0;
 	I2C_Init(I2C2, &I2C2_InitStruct);
 	I2C_Cmd(I2C2, ENABLE);
-
 }
 
 void NVIC_Configuration(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
 
-  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
-  NVIC_Init(&NVIC_InitStructure);
+	NVIC_Init(&NVIC_InitStructure);
 }
 
 void TIM_Configuration(void)
@@ -428,7 +431,8 @@ void TIM_Configuration(void)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInitStruct.TIM_Period = 33333;
-	TIM_TimeBaseInitStruct.TIM_Prescaler = 7200 * 9 - 1;;
+	TIM_TimeBaseInitStruct.TIM_Prescaler = 7200 * 9 - 1;
+	;
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
 
 	TIM_ClearFlag(TIM2, TIM_FLAG_Update);
