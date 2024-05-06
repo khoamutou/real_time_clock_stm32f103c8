@@ -3,6 +3,7 @@
 #include "ds1307.h"
 #include "i2c_lcd.h"
 
+/* Hello*/
 #define NORMAL_MODE 0
 #define ADJUST_MODE 1
 #define ALARM_MODE 	2
