@@ -75,9 +75,9 @@ int main(void)
 				Temp = DS1307_Read();
 				lcd_DisplayRtc(&Ds1307Read);
 
-				lcd_send_cmd(0x81);
+				LcdSendCmd(0x81);
 				Delay_SysTick(50);
-				lcd_send_cmd(0x0F);
+				LcdSendCmd(0x0F);
 				Delay_SysTick(50);
 			}
 			else if (MODE == ADJUST_MODE)
@@ -86,9 +86,9 @@ int main(void)
 				CurrentPosition = 0;
 				lcd_clear_display();
 				lcd_DisplayAlarm(&AlarmTime);
-				lcd_send_cmd(0x0C);
+				LcdSendCmd(0x0C);
 				Delay_SysTick(50);
-				lcd_send_cmd(0x87);
+				LcdSendCmd(0x87);
 				Delay_SysTick(50);
 				if (IsAlarm)
 				{
@@ -99,16 +99,16 @@ int main(void)
 					lcd_send_string("OFF");
 				}
 
-				lcd_send_cmd(0x87);
+				LcdSendCmd(0x87);
 				Delay_SysTick(50);
-				lcd_send_cmd(0x0F);
+				LcdSendCmd(0x0F);
 				Delay_SysTick(50);
 			}
 			else if (MODE == ALARM_MODE)
 			{
 				MODE = NORMAL_MODE;
 				lcd_clear_display();
-				lcd_send_cmd(0x0C);
+				LcdSendCmd(0x0C);
 				Delay_SysTick(50);
 			}
 		}
@@ -140,7 +140,7 @@ int main(void)
 				}
 				DS1307_Write_Struct(&Temp);
 				lcd_clear_display();
-				lcd_send_cmd(0x0C);
+				LcdSendCmd(0x0C);
 				Delay_SysTick(50);
 				MODE = NORMAL_MODE;
 			}
@@ -167,7 +167,7 @@ int main(void)
 					lcd_change_cursor_position(0xC9);
 					break;
 				default:
-					lcd_send_cmd(0x81);
+					LcdSendCmd(0x81);
 					lcd_change_cursor_position(0x81);
 					break;
 				}
@@ -179,31 +179,31 @@ int main(void)
 				{
 				case (1):
 				{
-					uint8_t binMinute = bcd_to_bin(Temp.minute);
+					uint8_t binMinute = BcdToBin(Temp.minute);
 					(binMinute >= 59) ? (binMinute = 0) : (binMinute++);
-					Temp.minute = bin_to_bcd(binMinute);
-					lcd_send_cmd(0x83);
+					Temp.minute = BinToBcd(binMinute);
+					LcdSendCmd(0x83);
 					Delay_SysTick(50);
-					lcdSendData(((Temp.minute >> 4) & 0x0f) + 0x30);
-					lcdSendData((Temp.minute & 0x0f) + 0x30);
+					LcdSendData(((Temp.minute >> 4) & 0x0f) + 0x30);
+					LcdSendData((Temp.minute & 0x0f) + 0x30);
 					break;
 				}
 				case (2):
 				{
-					uint8_t binSecond = bcd_to_bin(Temp.second);
+					uint8_t binSecond = BcdToBin(Temp.second);
 					(binSecond >= 59) ? (binSecond = 0) : (binSecond++);
-					Temp.second = bin_to_bcd(binSecond);
-					lcd_send_cmd(0x86);
+					Temp.second = BinToBcd(binSecond);
+					LcdSendCmd(0x86);
 					Delay_SysTick(50);
-					lcdSendData(((Temp.second >> 4) & 0x0f) + 0x30);
-					lcdSendData((Temp.second & 0x0f) + 0x30);
+					LcdSendData(((Temp.second >> 4) & 0x0f) + 0x30);
+					LcdSendData((Temp.second & 0x0f) + 0x30);
 					break;
 				}
 				case (3):
 				{
-					uint8_t binDate = bcd_to_bin(Temp.date);
-					uint8_t binMonth = bcd_to_bin(Temp.month);
-					uint8_t binYear = bcd_to_bin(Temp.year);
+					uint8_t binDate = BcdToBin(Temp.date);
+					uint8_t binMonth = BcdToBin(Temp.month);
+					uint8_t binYear = BcdToBin(Temp.year);
 					uint8_t MaxDay;
 
 					if (binMonth == 2)
@@ -225,44 +225,44 @@ int main(void)
 
 					(binDate >= MaxDay) ? (binDate = 1) : (binDate++);
 
-					Temp.date = bin_to_bcd(binDate);
-					lcd_send_cmd(0xC0);
+					Temp.date = BinToBcd(binDate);
+					LcdSendCmd(0xC0);
 					Delay_SysTick(50);
-					lcdSendData(((Temp.date >> 4) & 0x0f) + 0x30);
-					lcdSendData((Temp.date & 0x0f) + 0x30);
+					LcdSendData(((Temp.date >> 4) & 0x0f) + 0x30);
+					LcdSendData((Temp.date & 0x0f) + 0x30);
 					break;
 				}
 				case (4):
 				{
-					uint8_t binMonth = bcd_to_bin(Temp.month);
+					uint8_t binMonth = BcdToBin(Temp.month);
 					(binMonth >= 12) ? (binMonth = 1) : (binMonth++);
-					Temp.month = bin_to_bcd(binMonth);
-					lcd_send_cmd(0xC3);
+					Temp.month = BinToBcd(binMonth);
+					LcdSendCmd(0xC3);
 					Delay_SysTick(50);
-					lcdSendData(((Temp.month >> 4) & 0x0f) + 0x30);
-					lcdSendData((Temp.month & 0x0f) + 0x30);
+					LcdSendData(((Temp.month >> 4) & 0x0f) + 0x30);
+					LcdSendData((Temp.month & 0x0f) + 0x30);
 					break;
 				}
 				case (5):
 				{
-					uint8_t binYear = bcd_to_bin(Temp.year);
+					uint8_t binYear = BcdToBin(Temp.year);
 					(binYear >= 99) ? (binYear = 0) : (binYear++);
-					Temp.year = bin_to_bcd(binYear);
-					lcd_send_cmd(0xC8);
+					Temp.year = BinToBcd(binYear);
+					LcdSendCmd(0xC8);
 					Delay_SysTick(50);
-					lcdSendData(((Temp.year >> 4) & 0x0f) + 0x30);
-					lcdSendData((Temp.year & 0x0f) + 0x30);
+					LcdSendData(((Temp.year >> 4) & 0x0f) + 0x30);
+					LcdSendData((Temp.year & 0x0f) + 0x30);
 					break;
 				}
 				default:
 				{
-					uint8_t binHour = bcd_to_bin(Temp.hour);
+					uint8_t binHour = BcdToBin(Temp.hour);
 					(binHour >= 23) ? (binHour = 0) : (binHour++);
-					Temp.hour = bin_to_bcd(binHour);
-					lcd_send_cmd(0x80);
+					Temp.hour = BinToBcd(binHour);
+					LcdSendCmd(0x80);
 					Delay_SysTick(50);
-					lcdSendData(((Temp.hour >> 4) & 0x0f) + 0x30);
-					lcdSendData((Temp.hour & 0x0f) + 0x30);
+					LcdSendData(((Temp.hour >> 4) & 0x0f) + 0x30);
+					LcdSendData((Temp.hour & 0x0f) + 0x30);
 					break;
 				}
 				}
@@ -296,40 +296,40 @@ int main(void)
 				{
 				case (1):
 				{
-					uint8_t binHour = bcd_to_bin(AlarmTime.hour);
+					uint8_t binHour = BcdToBin(AlarmTime.hour);
 					(binHour >= 23) ? (binHour = 0) : (binHour++);
-					AlarmTime.hour = bin_to_bcd(binHour);
-					lcd_send_cmd(0xC0);
+					AlarmTime.hour = BinToBcd(binHour);
+					LcdSendCmd(0xC0);
 					Delay_SysTick(50);
-					lcdSendData(((AlarmTime.hour >> 4) & 0x0f) + 0x30);
-					lcdSendData((AlarmTime.hour & 0x0f) + 0x30);
+					LcdSendData(((AlarmTime.hour >> 4) & 0x0f) + 0x30);
+					LcdSendData((AlarmTime.hour & 0x0f) + 0x30);
 					break;
 				}
 				case (2):
 				{
-					uint8_t binMinute = bcd_to_bin(AlarmTime.minute);
+					uint8_t binMinute = BcdToBin(AlarmTime.minute);
 					(binMinute >= 59) ? (binMinute = 0) : (binMinute++);
-					AlarmTime.minute = bin_to_bcd(binMinute);
-					lcd_send_cmd(0xC3);
+					AlarmTime.minute = BinToBcd(binMinute);
+					LcdSendCmd(0xC3);
 					Delay_SysTick(50);
-					lcdSendData(((AlarmTime.minute >> 4) & 0x0f) + 0x30);
-					lcdSendData((AlarmTime.minute & 0x0f) + 0x30);
+					LcdSendData(((AlarmTime.minute >> 4) & 0x0f) + 0x30);
+					LcdSendData((AlarmTime.minute & 0x0f) + 0x30);
 					break;
 				}
 				case (3):
 				{
-					uint8_t binSecond = bcd_to_bin(AlarmTime.second);
+					uint8_t binSecond = BcdToBin(AlarmTime.second);
 					(binSecond >= 59) ? (binSecond = 0) : (binSecond++);
-					AlarmTime.second = bin_to_bcd(binSecond);
-					lcd_send_cmd(0xC6);
+					AlarmTime.second = BinToBcd(binSecond);
+					LcdSendCmd(0xC6);
 					Delay_SysTick(50);
-					lcdSendData(((AlarmTime.second >> 4) & 0x0f) + 0x30);
-					lcdSendData((AlarmTime.second & 0x0f) + 0x30);
+					LcdSendData(((AlarmTime.second >> 4) & 0x0f) + 0x30);
+					LcdSendData((AlarmTime.second & 0x0f) + 0x30);
 					break;
 				}
 				default:
 				{
-					lcd_send_cmd(0x87);
+					LcdSendCmd(0x87);
 					Delay_SysTick(50);
 					if (IsAlarm)
 					{
@@ -339,16 +339,16 @@ int main(void)
 					else
 					{
 						IsAlarm = ALARM_ON;
-						lcd_send_cmd(0x89);
+						LcdSendCmd(0x89);
 						Delay_SysTick(50);
 						lcd_send_string(" ");
-						lcd_send_cmd(0x87);
+						LcdSendCmd(0x87);
 						Delay_SysTick(50);
 						lcd_send_string("ON");
 					}
-					lcd_send_cmd(0x87);
+					LcdSendCmd(0x87);
 					Delay_SysTick(50);
-					lcd_send_cmd(0x0F);
+					LcdSendCmd(0x0F);
 					Delay_SysTick(50);
 				}
 				}

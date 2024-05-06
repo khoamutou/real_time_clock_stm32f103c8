@@ -31,12 +31,12 @@ typedef struct DS1307_Date
 	uint8_t year;
 } Date;
 
-uint8_t bcd_to_bin(uint8_t bcd)
+uint8_t BcdToBin(uint8_t bcd)
 {
 	return (bcd >> 4) * 10 + (bcd & 0x0f);
 }
 
-uint8_t bin_to_bcd(uint8_t bin)
+uint8_t BinToBcd(uint8_t bin)
 {
 	return ((bin / 10) << 4) | (bin % 10);
 }
@@ -124,31 +124,31 @@ void DS1307_Write(uint8_t hour, uint8_t minute, uint8_t second,
 	{
 	};
 	//
-	I2C_SendData(I2C2, bin_to_bcd(second) & 0x7F);
+	I2C_SendData(I2C2, BinToBcd(second) & 0x7F);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
 	{
 	};
-	I2C_SendData(I2C2, bin_to_bcd(minute) & 0x7F);
+	I2C_SendData(I2C2, BinToBcd(minute) & 0x7F);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
 	{
 	};
-	I2C_SendData(I2C2, bin_to_bcd(hour) & 0x3F);
+	I2C_SendData(I2C2, BinToBcd(hour) & 0x3F);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
 	{
 	};
-	I2C_SendData(I2C2, bin_to_bcd(day) & 0x07);
+	I2C_SendData(I2C2, BinToBcd(day) & 0x07);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
 	{
 	};
-	I2C_SendData(I2C2, bin_to_bcd(date) & 0x3F);
+	I2C_SendData(I2C2, BinToBcd(date) & 0x3F);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
 	{
 	};
-	I2C_SendData(I2C2, bin_to_bcd(month) & 0x1F);
+	I2C_SendData(I2C2, BinToBcd(month) & 0x1F);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
 	{
 	};
-	I2C_SendData(I2C2, bin_to_bcd(year) & 0xFF);
+	I2C_SendData(I2C2, BinToBcd(year) & 0xFF);
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
 	{
 	};
@@ -208,7 +208,7 @@ TimeStructTypedef DS1307_Read_Time(void)
 	//
 }
 
-Date DS1307_Read_Date(void)
+Date DS1307_ReadDate(void)
 {
 	Date TempDate = {0};
 	I2C_AcknowledgeConfig(I2C2, ENABLE);

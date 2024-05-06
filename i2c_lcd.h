@@ -22,7 +22,7 @@ void lcdSendByte(char data)
 	I2C_GenerateSTOP(I2C2, ENABLE);
 }
 
-void lcdSendData(char data)
+void LcdSendData(char data)
 {
 	char data_u, data_l;
 	uint8_t data_t[4];
@@ -38,7 +38,7 @@ void lcdSendData(char data)
 	}
 }
 
-void lcd_send_cmd(char cmd)
+void LcdSendCmd(char cmd)
 {
 	char data_u, data_l;
 	uint8_t data_t[4];
@@ -62,25 +62,25 @@ void lcd_send_string(uint8_t *str)
 
 void lcd_clear_display(void)
 {
-	lcd_send_cmd(0x01); // clear display
+	LcdSendCmd(0x01); // clear display
 	Delay_SysTick(50);
 }
 
 void lcd_init(void)
 {
-	lcd_send_cmd(0x33); /* set 4-bits interface */
+	LcdSendCmd(0x33); /* set 4-bits interface */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x32);
+	LcdSendCmd(0x32);
 	Delay_SysTick(50);
-	lcd_send_cmd(0x28); /* start to set LCD function */
+	LcdSendCmd(0x28); /* start to set LCD function */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x06); /* set entry mode */
+	LcdSendCmd(0x06); /* set entry mode */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x0C); /* set display to on */
+	LcdSendCmd(0x0C); /* set display to on */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x02); /* move cursor to home and set data address to 0 */
+	LcdSendCmd(0x02); /* move cursor to home and set data address to 0 */
 	Delay_SysTick(50);
-	lcd_send_cmd(0x80);
+	LcdSendCmd(0x80);
 	Delay_SysTick(50);
 }
 
@@ -96,7 +96,7 @@ void lcd_GoToXY(char row, char col)
 		if (col < 16)
 			pos = pos + col;
 
-		lcd_send_cmd(pos);
+		LcdSendCmd(pos);
 	}
 }
 
@@ -182,9 +182,9 @@ void lcd_DisplayAlarm(TimeStructTypedef *TimeAndDatePtr)
 
 void lcd_change_cursor_position(uint8_t position)
 {
-	lcd_send_cmd(position);
+	LcdSendCmd(position);
 	Delay_SysTick(50);
-	lcd_send_cmd(0x0F);
+	LcdSendCmd(0x0F);
 	Delay_SysTick(50);
 }
 
