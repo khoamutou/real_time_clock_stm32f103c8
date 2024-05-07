@@ -54,7 +54,7 @@ void LcdSendCmd(char cmd)
 	}
 }
 
-void lcd_send_string(uint8_t *str)
+void LcdSendString(uint8_t *str)
 {
 	while (*str)
 		lcd_send_data(*str++);
@@ -85,7 +85,7 @@ void lcd_init(void)
 }
 
 // lcd go to X(first row), Y(second row) line
-void lcd_GoToXY(char row, char col)
+void LcdGoToXY(char row, char col)
 {
 	char pos;
 
@@ -103,7 +103,7 @@ void lcd_GoToXY(char row, char col)
 // lcd display rtc time function
 void lcd_DisplayRtcTime(char hour, char min, char sec)
 {
-	lcd_GoToXY(0, 0);
+	LcdGoToXY(0, 0);
 	lcd_send_data(((hour >> 4) & 0x0f) + 0x30);
 	lcd_send_data((hour & 0x0f) + 0x30);
 	lcd_send_data(':');
@@ -119,7 +119,7 @@ void lcd_DisplayRtcTime(char hour, char min, char sec)
 // lcd display rtc date function
 void lcd_DisplayRtcDate(char day, char month, char year)
 {
-	lcd_GoToXY(1, 0);
+	LcdGoToXY(1, 0);
 	lcd_send_data(((day >> 4) & 0x0f) + 0x30);
 	lcd_send_data((day & 0x0f) + 0x30);
 	lcd_send_data('/');
@@ -134,7 +134,7 @@ void lcd_DisplayRtcDate(char day, char month, char year)
 
 void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 {
-	lcd_GoToXY(0, 0);
+	LcdGoToXY(0, 0);
 	lcd_send_data(((TimeAndDatePtr->hour >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->hour & 0x0f) + 0x30);
 	lcd_send_data(':');
@@ -146,7 +146,7 @@ void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 	lcd_send_data(((TimeAndDatePtr->second >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->second & 0x0f) + 0x30);
 
-	lcd_GoToXY(1, 0);
+	LcdGoToXY(1, 0);
 	lcd_send_data(((TimeAndDatePtr->date >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->date & 0x0f) + 0x30);
 	lcd_send_data('/');
@@ -163,11 +163,11 @@ void lcd_DisplayRtc(TimeAndDate *TimeAndDatePtr)
 
 void lcd_DisplayAlarm(TimeStructTypedef *TimeAndDatePtr)
 {
-	lcd_GoToXY(0, 0);
+	LcdGoToXY(0, 0);
 
-	lcd_send_string("ALARM: ");
+	LcdSendString("ALARM: ");
 
-	lcd_GoToXY(1, 0);
+	LcdGoToXY(1, 0);
 	lcd_send_data(((TimeAndDatePtr->hour >> 4) & 0x0f) + 0x30);
 	lcd_send_data((TimeAndDatePtr->hour & 0x0f) + 0x30);
 	lcd_send_data(':');
@@ -180,7 +180,7 @@ void lcd_DisplayAlarm(TimeStructTypedef *TimeAndDatePtr)
 	lcd_send_data((TimeAndDatePtr->second & 0x0f) + 0x30);
 }
 
-void lcd_change_cursor_position(uint8_t position)
+void LcdChangeCursorPosition(uint8_t position)
 {
 	LcdSendCmd(position);
 	Delay_SysTick(50);

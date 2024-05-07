@@ -46,7 +46,7 @@ int main(void)
 	TIM_Configuration();
 	DS1307_Init();
 	// DS1307_Write(2, 56, 0, 1, 3, 12, 23);
-	AlarmTime = DS1307_Read_Alarm_Time(&IsAlarm);
+	AlarmTime = DS1307_ReadAlarmTime(&IsAlarm);
 	DS1307_Read();
 	lcd_init();
 	uint8_t CurrentPosition;
@@ -92,11 +92,11 @@ int main(void)
 				Delay_SysTick(50);
 				if (IsAlarm)
 				{
-					lcd_send_string("ON");
+					LcdSendString("ON");
 				}
 				else
 				{
-					lcd_send_string("OFF");
+					LcdSendString("OFF");
 				}
 
 				LcdSendCmd(0x87);
@@ -152,23 +152,23 @@ int main(void)
 				switch (CurrentPosition)
 				{
 				case (1):
-					lcd_change_cursor_position(0x84);
+					LcdChangeCursorPosition(0x84);
 					break;
 				case (2):
-					lcd_change_cursor_position(0x87);
+					LcdChangeCursorPosition(0x87);
 					break;
 				case (3):
-					lcd_change_cursor_position(0xC1);
+					LcdChangeCursorPosition(0xC1);
 					break;
 				case (4):
-					lcd_change_cursor_position(0xC4);
+					LcdChangeCursorPosition(0xC4);
 					break;
 				case (5):
-					lcd_change_cursor_position(0xC9);
+					LcdChangeCursorPosition(0xC9);
 					break;
 				default:
 					LcdSendCmd(0x81);
-					lcd_change_cursor_position(0x81);
+					LcdChangeCursorPosition(0x81);
 					break;
 				}
 			}
@@ -204,26 +204,26 @@ int main(void)
 					uint8_t binDate = BcdToBin(Temp.date);
 					uint8_t binMonth = BcdToBin(Temp.month);
 					uint8_t binYear = BcdToBin(Temp.year);
-					uint8_t MaxDay;
+					uint8_t maxDay;
 
 					if (binMonth == 2)
 					{
-						(binYear % 4 == 0) ? (MaxDay = 29) : (MaxDay = 28);
+						(binYear % 4 == 0) ? (maxDay = 29) : (maxDay = 28);
 					}
 					else if (binMonth == 1 || binMonth == 3 ||
 							 binMonth == 5 || binMonth == 7 ||
 							 binMonth == 8 || binMonth == 10 ||
 							 binMonth == 12)
 					{
-						MaxDay = 31;
+						maxDay = 31;
 					}
 					else if (binMonth == 4 || binMonth == 6 ||
 							 binMonth == 9 || binMonth == 11)
 					{
-						MaxDay = 30;
+						maxDay = 30;
 					}
 
-					(binDate >= MaxDay) ? (binDate = 1) : (binDate++);
+					(binDate >= maxDay) ? (binDate = 1) : (binDate++);
 
 					Temp.date = BinToBcd(binDate);
 					LcdSendCmd(0xC0);
@@ -276,16 +276,16 @@ int main(void)
 				switch (CurrentPosition)
 				{
 				case (1):
-					lcd_change_cursor_position(0xC1);
+					LcdChangeCursorPosition(0xC1);
 					break;
 				case (2):
-					lcd_change_cursor_position(0xC4);
+					LcdChangeCursorPosition(0xC4);
 					break;
 				case (3):
-					lcd_change_cursor_position(0xC7);
+					LcdChangeCursorPosition(0xC7);
 					break;
 				default:
-					lcd_change_cursor_position(0x87);
+					LcdChangeCursorPosition(0x87);
 					break;
 				}
 			}
@@ -334,17 +334,17 @@ int main(void)
 					if (IsAlarm)
 					{
 						IsAlarm = ALARM_OFF;
-						lcd_send_string("OFF");
+						LcdSendString("OFF");
 					}
 					else
 					{
 						IsAlarm = ALARM_ON;
 						LcdSendCmd(0x89);
 						Delay_SysTick(50);
-						lcd_send_string(" ");
+						LcdSendString(" ");
 						LcdSendCmd(0x87);
 						Delay_SysTick(50);
-						lcd_send_string("ON");
+						LcdSendString("ON");
 					}
 					LcdSendCmd(0x87);
 					Delay_SysTick(50);

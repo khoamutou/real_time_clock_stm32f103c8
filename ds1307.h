@@ -343,7 +343,7 @@ void DS1307_Set_Alarm( TimeStructTypedef * TimeStructTypedefPtr, uint8_t IsAlarm
 	I2C_GenerateSTOP( I2C2, ENABLE);
 }
 
-TimeStructTypedef DS1307_Read_Alarm_Time(uint8_t * IsAlarm)
+TimeStructTypedef DS1307_ReadAlarmTime(uint8_t * IsAlarm)
 {
 	TimeStructTypedef AlarmTime;
 	
